@@ -101,7 +101,7 @@ Este projeto está sob a licença MIT.
 **Larissa Monteiro**
 
 - GitHub: [@Larismontp](https://github.com/Larismontp)
-- LinkedIn: [Seu LinkedIn](https://linkedin.com/in/seu-perfil)
+- LinkedIn: [Larisdev](https://linkedin.com/in/Larisdev)
 
 ---
 
