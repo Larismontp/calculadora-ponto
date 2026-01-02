@@ -1,0 +1,31 @@
+/* Estilos globais melhorados */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
+  min-height: 100vh;
+}
+
+/* Estilo dos inputs de tempo customizados */
+input[type="time"]::-webkit-calendar-picker-indicator {
+  filter: invert(29%) sepia(89%) saturate(2758%) hue-rotate(346deg) brightness(95%) contrast(92%);
+  cursor: pointer;
+  font-size: 1.2rem;
+}
+
+/* Animação de loading no botão */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin {
+  animation: spin 1s linear infinite;
+}
