@@ -21,8 +21,10 @@ function App() {
   // Estados para armazenar os resultados dos cálculos
   const [resultados, setResultados] = useState({
     horarioSaida: '',
+    horarioSaidaSemTolerancia: '',
     tempoAlmoco: '',
-    horasTrabalhadas: ''
+    horasTrabalhadas: '',
+    horasExtras: ''
   })
 
   /**
@@ -32,17 +34,23 @@ function App() {
   const handleCalcular = () => {
     // Ativa animação de loading
     setIsCalculating(true)
-    
+
     // Simula um pequeno delay para mostrar a animação
     setTimeout(() => {
       const resultado = calcularHorarioSaida({
         entrada1,
         saida1,
-        entrada2
+        entrada2,
+        saida2  // Passa o horário real de saída se foi preenchido
       })
-      
+
       setResultados(resultado)
-      setSaida2(resultado.horarioSaida) // Preenche automaticamente o campo de saída
+
+      // Só preenche automaticamente se o usuário NÃO digitou
+      if (!saida2) {
+        setSaida2(resultado.horarioSaida)
+      }
+
       setIsCalculating(false)
     }, 500)
   }
@@ -57,8 +65,10 @@ function App() {
     setSaida2('')
     setResultados({
       horarioSaida: '',
+      horarioSaidaSemTolerancia: '',
       tempoAlmoco: '',
-      horasTrabalhadas: ''
+      horasTrabalhadas: '',
+      horasExtras: ''
     })
   }
 
@@ -144,8 +154,10 @@ function App() {
         {/* Card de resultados */}
         <ResultCard
           horarioSaida={resultados.horarioSaida}
+          horarioSaidaSemTolerancia={resultados.horarioSaidaSemTolerancia}
           tempoAlmoco={resultados.tempoAlmoco}
           horasTrabalhadas={resultados.horasTrabalhadas}
+          horasExtras={resultados.horasExtras}
         />
 
       </div>
