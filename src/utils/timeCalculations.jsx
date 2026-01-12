@@ -38,15 +38,30 @@ export const formatarTempo = (minutos) => {
 
 /**
  * Calcula o horário de saída e informações do expediente
- * @param {Object} horarios - Objeto com os horários de entrada e saída
+ * @param {Object} params - Objeto com os horários de entrada/saída e configurações
+ * @param {string} params.entrada1 - Horário da primeira entrada
+ * @param {string} params.saida1 - Horário da primeira saída (almoço)
+ * @param {string} params.entrada2 - Horário da segunda entrada (volta do almoço)
+ * @param {string} params.saida2 - Horário da segunda saída (fim do expediente)
+ * @param {number} params.jornadaMinutos - Jornada completa em minutos (padrão: 528 = 8h48min)
+ * @param {number} params.toleranciaMinutos - Tolerância em minutos (padrão: 10)
+ * @param {number} params.intervaloMinimoMinutos - Intervalo mínimo em minutos (padrão: 72 = 1h12min)
  * @returns {Object} - Objeto com horário de saída, tempo de almoço e horas trabalhadas
  */
-export const calcularHorarioSaida = ({ entrada1, saida1, entrada2, saida2 }) => {
-  // Meta de trabalho COM tolerância: 8h38min = 518 minutos
-  const META_MINUTOS = 518
+export const calcularHorarioSaida = ({
+  entrada1,
+  saida1,
+  entrada2,
+  saida2,
+  jornadaMinutos = 528,
+  toleranciaMinutos = 10,
+  intervaloMinimoMinutos = 72
+}) => {
+  // Jornada completa SEM tolerância (valor configurável)
+  const JORNADA_COMPLETA = jornadaMinutos
 
-  // Jornada completa SEM tolerância: 8h48min = 528 minutos
-  const JORNADA_COMPLETA = 528
+  // Meta de trabalho COM tolerância (jornada - tolerância)
+  const META_MINUTOS = jornadaMinutos - toleranciaMinutos
 
   // Converter todos os horários para minutos
   const entrada1Min = converterParaMinutos(entrada1)

@@ -2,6 +2,7 @@ import { useState } from 'react'
 import Header from './components/Header'
 import TimeInput from './components/TimeInput'
 import ResultCard from './components/ResultCard'
+import ConfigJornada from './components/ConfigJornada'
 import { calcularHorarioSaida } from './utils/timeCalculations'
 
 /**
@@ -14,9 +15,14 @@ function App() {
   const [saida1, setSaida1] = useState('')
   const [entrada2, setEntrada2] = useState('')
   const [saida2, setSaida2] = useState('')
-  
+
   // Estado para controlar loading da animação
   const [isCalculating, setIsCalculating] = useState(false)
+
+  // Estados para configuração de jornada (valores padrão mantêm comportamento atual)
+  const [jornadaMinutos, setJornadaMinutos] = useState(528) // 8h48min
+  const [toleranciaMinutos, setToleranciaMinutos] = useState(10) // 10min
+  const [intervaloMinimoMinutos, setIntervaloMinimoMinutos] = useState(72) // 1h12min
   
   // Estados para armazenar os resultados dos cálculos
   const [resultados, setResultados] = useState({
@@ -26,6 +32,21 @@ function App() {
     horasTrabalhadas: '',
     horasExtras: ''
   })
+
+  /**
+   * Função que salva as novas configurações de jornada
+   * @param {Object} config - Objeto com as novas configurações
+   */
+  const handleSalvarConfig = (config) => {
+    setJornadaMinutos(config.jornadaMinutos)
+    setToleranciaMinutos(config.toleranciaMinutos)
+    setIntervaloMinimoMinutos(config.intervaloMinimoMinutos)
+
+    // Recalcula automaticamente se já houver horários preenchidos
+    if (entrada1 && saida1 && entrada2) {
+      handleCalcular()
+    }
+  }
 
   /**
    * Função que processa o cálculo do horário de saída
@@ -41,7 +62,10 @@ function App() {
         entrada1,
         saida1,
         entrada2,
-        saida2  // Passa o horário real de saída se foi preenchido
+        saida2,  // Passa o horário real de saída se foi preenchido
+        jornadaMinutos,
+        toleranciaMinutos,
+        intervaloMinimoMinutos
       })
 
       setResultados(resultado)
@@ -75,6 +99,14 @@ function App() {
   return (
     <div className="min-h-screen bg-red-500 flex items-center justify-center p-4">
       <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md transform transition-all duration-300 hover:shadow-primary-500/20">
+
+        {/* Configuração de Jornada (colapsável) */}
+        <ConfigJornada
+          jornadaMinutos={jornadaMinutos}
+          toleranciaMinutos={toleranciaMinutos}
+          intervaloMinimoMinutos={intervaloMinimoMinutos}
+          onSalvar={handleSalvarConfig}
+        />
 
         {/* Cabeçalho */}
         <Header />
@@ -158,6 +190,8 @@ function App() {
           tempoAlmoco={resultados.tempoAlmoco}
           horasTrabalhadas={resultados.horasTrabalhadas}
           horasExtras={resultados.horasExtras}
+          jornadaMinutos={jornadaMinutos}
+          toleranciaMinutos={toleranciaMinutos}
         />
 
       </div>

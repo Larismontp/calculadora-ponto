@@ -5,13 +5,34 @@
  * @param {string} tempoAlmoco - Tempo de almoço formatado
  * @param {string} horasTrabalhadas - Total de horas trabalhadas formatado
  * @param {string} horasExtras - Horas extras trabalhadas formatado
+ * @param {number} jornadaMinutos - Jornada configurada em minutos (padrão: 528)
+ * @param {number} toleranciaMinutos - Tolerância configurada em minutos (padrão: 10)
  */
-function ResultCard({ horarioSaida, horarioSaidaSemTolerancia, tempoAlmoco, horasTrabalhadas, horasExtras }) {
+function ResultCard({
+  horarioSaida,
+  horarioSaidaSemTolerancia,
+  tempoAlmoco,
+  horasTrabalhadas,
+  horasExtras,
+  jornadaMinutos = 528,
+  toleranciaMinutos = 10
+}) {
   // Se não tiver horário de saída, não renderiza nada
   if (!horarioSaida) return null
 
   // Verifica se há horas extras (qualquer valor diferente de "0min")
   const temHoraExtra = horasExtras && horasExtras !== '0min'
+
+  // Formata minutos para texto legível (Xh Ymin)
+  const formatarMinutos = (minutos) => {
+    const horas = Math.floor(minutos / 60)
+    const mins = minutos % 60
+    if (mins === 0) return `${horas}h`
+    return `${horas}h${mins}min`
+  }
+
+  // Calcula a meta com tolerância
+  const metaMinutos = jornadaMinutos - toleranciaMinutos
 
   return (
     <div className="bg-gradient-to-br from-red-50 via-white to-pink-50 rounded-2xl p-6 space-y-4 border-2 border-primary-200 shadow-lg animate-slide-up hover:shadow-xl hover:shadow-primary-200/50 transition-all duration-300">
@@ -19,7 +40,7 @@ function ResultCard({ horarioSaida, horarioSaidaSemTolerancia, tempoAlmoco, hora
       {/* Horário de saída com tolerância */}
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-2 font-medium">
-          ✅ Horário de saída (com tolerância - 8h38min):
+          ✅ Horário de saída (com tolerância - {formatarMinutos(metaMinutos)}):
         </p>
         <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-4 animate-pulse-slow">
           <p className="text-5xl font-bold text-white tracking-wider drop-shadow-lg">
@@ -31,7 +52,7 @@ function ResultCard({ horarioSaida, horarioSaidaSemTolerancia, tempoAlmoco, hora
       {/* Horário de saída sem tolerância */}
       <div className="text-center">
         <p className="text-sm text-gray-600 mb-2 font-medium">
-          ⏰ Horário de saída (jornada completa - 8h48min):
+          ⏰ Horário de saída (jornada completa - {formatarMinutos(jornadaMinutos)}):
         </p>
         <div className="bg-gradient-to-r from-orange-500 to-yellow-500 rounded-xl p-3">
           <p className="text-3xl font-bold text-white tracking-wider drop-shadow-lg">
