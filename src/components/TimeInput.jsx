@@ -1,37 +1,37 @@
+import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
+
 /**
  * Componente de input para horários
+ * Design redesenhado com bolinhas coloridas
  * @param {string} label - Texto do label
- * @param {string} icon - Emoji do ícone
+ * @param {string} dotColor - Cor da bolinha (emerald, amber, blue, purple)
  * @param {string} value - Valor atual do input
  * @param {function} onChange - Função chamada quando o valor muda
  * @param {string} placeholder - Placeholder opcional
  */
-function TimeInput({ label, icon, value, onChange, placeholder }) {
+function TimeInput({ label, color, value, onChange }) {
+  const colorClasses = {
+    emerald: 'bg-emerald-400',
+    amber: 'bg-amber-400',
+    blue: 'bg-blue-400',
+    purple: 'bg-purple-400'
+  }
+
   return (
-    <div className="group animate-slide-up">
-      {/* Label com ícone */}
-      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2 group-hover:text-primary-600 transition-colors duration-200">
-        <span className="text-xl transition-transform group-hover:scale-110">{icon}</span>
+    <div>
+      <label className="block text-xs font-medium text-slate-500 mb-1.5 flex items-center gap-1.5">
+        <span className={`w-1.5 h-1.5 ${colorClasses[color]} rounded-full`}></span>
         {label}
       </label>
-      
-      {/* Input estilizado */}
       <input
         type="time"
         value={value}
         onChange={onChange}
-        placeholder={placeholder}
-        className="w-full px-4 py-3 text-lg font-medium text-gray-800 
-                   bg-white border-2 border-gray-300 rounded-xl
-                   focus:border-primary-500 focus:ring-4 focus:ring-primary-100 
-                   hover:border-primary-300
-                   transition-all duration-200 
-                   shadow-sm hover:shadow-md
-                   focus:outline-none
-                   placeholder:text-gray-400"
+        className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium text-center focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 transition-all outline-none"
       />
     </div>
-  );
+  )
 }
 
 export default TimeInput;

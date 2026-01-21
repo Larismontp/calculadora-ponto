@@ -1,32 +1,29 @@
 /**
  * Componente do cabeçalho da aplicação
+ * Design redesenhado seguindo referência do Canva com SVG
  */
 function Header() {
   return (
-    <header className="text-center mb-8 animate-fade-in">
-      {/* Container do ícone com animação */}
-      <div className="inline-flex items-center justify-center w-20 h-20 mb-4 bg-gradient-to-br from-primary-400 to-primary-600 rounded-2xl shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300">
-        <span className="text-5xl animate-pulse-slow">⏰</span>
+    <header className="text-center mb-6">
+      {/* Logo: Círculo vermelho arredondado com relógio SVG branco */}
+      <div className="inline-flex items-center justify-center w-16 h-16 mb-4 bg-red-600 rounded-2xl shadow-lg">
+        <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
       </div>
-      
-      {/* Título com gradiente */}
-      <h1 className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary-600 to-primary-800 bg-clip-text text-transparent mb-3">
-        Calculadora de Horário
+
+      {/* Título principal */}
+      <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-1">
+        Meu Ponto
       </h1>
-      
-      {/* Meta */}
-      <div className="flex items-center justify-center gap-2 mb-2">
-        <p className="text-gray-700 text-lg font-semibold px-3">
-          Meta: <span className="text-primary-600 text-xl font-bold">8h38min</span>
-        </p>
-      </div>
-      
-      {/* Subtítulo com gradiente e emoji */}
-      <div className="h-px flex bg-gradient-to-r from-transparent via-primary-300 to-transparent"></div>
-      
-      <p className="text-gray-500 text-xs italic">
-        Contribua o mínimo com o capitalismo!
+
+      {/* Subtitle */}
+      <p className="text-gray-500 text-sm mb-4">
+        Controle inteligente de jornada
       </p>
+
+      {/* Linha laranja/vermelha separadora */}
+      <div className="h-1 w-full bg-gradient-to-r from-red-600 via-orange-500 to-rose-600 rounded-full mb-6"></div>
     </header>
   );
 }

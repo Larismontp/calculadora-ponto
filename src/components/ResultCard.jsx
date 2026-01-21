@@ -1,5 +1,8 @@
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+
 /**
  * Componente que exibe os resultados do cálculo
+ * Design completamente redesenhado seguindo referência do Canva com SVG
  * @param {string} horarioSaida - Horário calculado de saída (com tolerância)
  * @param {string} horarioSaidaSemTolerancia - Horário calculado de saída (jornada completa)
  * @param {string} tempoAlmoco - Tempo de almoço formatado
@@ -23,88 +26,113 @@ function ResultCard({
   // Verifica se há horas extras (qualquer valor diferente de "0min")
   const temHoraExtra = horasExtras && horasExtras !== '0min'
 
-  // Formata minutos para texto legível (Xh Ymin)
-  const formatarMinutos = (minutos) => {
-    const horas = Math.floor(minutos / 60)
-    const mins = minutos % 60
-    if (mins === 0) return `${horas}h`
-    return `${horas}h${mins}min`
-  }
-
-  // Calcula a meta com tolerância
-  const metaMinutos = jornadaMinutos - toleranciaMinutos
-
   return (
-    <div className="bg-gradient-to-br from-red-50 via-white to-pink-50 rounded-2xl p-6 space-y-4 border-2 border-primary-200 shadow-lg animate-slide-up hover:shadow-xl hover:shadow-primary-200/50 transition-all duration-300">
+    <div className="space-y-6">
+      {/* Título da seção de resultados com SVG de gráfico */}
+      <div className="flex items-center justify-center gap-2">
+        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+        </svg>
+        <h2 className="text-xl font-bold text-gray-800 text-center">Seus Resultados</h2>
+      </div>
 
-      {/* Horário de saída com tolerância */}
-      <div className="text-center">
-        <p className="text-sm text-gray-600 mb-2 font-medium">
-          ✅ Horário de saída (com tolerância - {formatarMinutos(metaMinutos)}):
+      {/* Cards de horários com cores exatas do Canva */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {/* Card verde - Saída com tolerância */}
+        <Card className="bg-gradient-to-br from-emerald-50 to-teal-50 border-emerald-100 rounded-2xl shadow-md">
+          <CardContent className="p-6 text-center">
+            <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+              Saída c/ Tolerância
+            </p>
+            <p className="text-4xl font-bold text-emerald-600">
+              {horarioSaida}
+            </p>
+          </CardContent>
+        </Card>
+
+        {/* Card rosa - Jornada completa */}
+        <Card className="bg-gradient-to-br from-red-50 to-rose-50 border-red-100 rounded-2xl shadow-md">
+          <CardContent className="p-6 text-center">
+            <p className="text-xs font-semibold text-gray-600 mb-2 uppercase tracking-wide">
+              Jornada Completa
+            </p>
+            <p className="text-4xl font-bold text-red-600">
+              {horarioSaidaSemTolerancia}
+            </p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Mensagem motivacional sobre tolerância */}
+      <div className="bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-100 rounded-xl p-4 text-center">
+        <p className="text-sm font-medium text-gray-700 italic">
+          Isso mesmo camarada, contribua o mínimo com o capitalismo! HAHAHA
         </p>
-        <div className="bg-gradient-to-r from-primary-500 to-primary-600 rounded-xl p-4 animate-pulse-slow">
-          <p className="text-5xl font-bold text-white tracking-wider drop-shadow-lg">
-            {horarioSaida}
-          </p>
-        </div>
       </div>
 
-      {/* Horário de saída sem tolerância */}
-      <div className="text-center">
-        <p className="text-sm text-gray-600 mb-2 font-medium">
-          ⏰ Horário de saída (jornada completa - {formatarMinutos(jornadaMinutos)}):
-        </p>
-        <div className="bg-gradient-to-r from-orange-500 to-yellow-500 rounded-xl p-3">
-          <p className="text-3xl font-bold text-white tracking-wider drop-shadow-lg">
-            {horarioSaidaSemTolerancia}
-          </p>
-        </div>
-      </div>
+      {/* Seção Resumo do Dia com ícones */}
+      <div>
+        <h3 className="text-lg font-bold text-gray-800 mb-4">Resumo do Dia</h3>
+        <div className="grid grid-cols-2 gap-3">
+          {/* Tempo de Almoço */}
+          <Card className="bg-white border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">☀️</span>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">Tempo de Almoço</p>
+                  <p className="text-lg font-bold text-gray-800">{tempoAlmoco}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Linha divisória */}
-      <div className="flex items-center gap-2">
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary-300 to-transparent"></div>
-        <span className="text-primary-600 text-xs font-semibold">RESUMO</span>
-        <div className="h-px flex-1 bg-gradient-to-r from-transparent via-primary-300 to-transparent"></div>
-      </div>
+          {/* Total Trabalhado */}
+          <Card className="bg-white border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⏰</span>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">Total Trabalhado</p>
+                  <p className="text-lg font-bold text-gray-800">{horasTrabalhadas}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Informações adicionais */}
-      <div className="space-y-3">
-        <div className="flex justify-between items-center bg-white rounded-lg p-3 border border-primary-200 hover:border-primary-400 transition-colors">
-          <span className="text-gray-700 font-medium flex items-center gap-2">
-            <span className="text-lg">🍽️</span>
-            Tempo de almoço:
-          </span>
-          <span className="font-bold text-primary-600 text-lg">{tempoAlmoco}</span>
-        </div>
-        <div className="flex justify-between items-center bg-white rounded-lg p-3 border border-primary-200 hover:border-primary-400 transition-colors">
-          <span className="text-gray-700 font-medium flex items-center gap-2">
-            <span className="text-lg">⏱️</span>
-            Total de horas trabalhadas:
-          </span>
-          <span className="font-bold text-primary-600 text-lg">{horasTrabalhadas}</span>
-        </div>
-
-        {/* Card de horas extras com destaque condicional */}
-        <div className={`flex justify-between items-center rounded-lg p-3 border transition-all duration-300 ${
-          temHoraExtra
-            ? 'bg-green-50 border-green-400 hover:border-green-500 animate-pulse-slow shadow-md shadow-green-200/50'
-            : 'bg-white border-gray-200 hover:border-gray-300'
-        }`}>
-          <span className={`font-medium flex items-center gap-2 ${
-            temHoraExtra ? 'text-green-700' : 'text-gray-500'
+          {/* Horas Extras */}
+          <Card className={`border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow ${
+            temHoraExtra ? 'bg-green-50' : 'bg-white'
           }`}>
-            <span className="text-lg">💰</span>
-            Horas extras:
-          </span>
-          <span className={`font-bold text-lg ${
-            temHoraExtra ? 'text-green-600' : 'text-gray-500'
-          }`}>
-            {horasExtras}
-          </span>
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">📊</span>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">Horas Extras</p>
+                  <p className={`text-lg font-bold ${temHoraExtra ? 'text-green-600' : 'text-gray-800'}`}>
+                    {horasExtras}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Status */}
+          <Card className="bg-white border-gray-200 rounded-2xl shadow-sm hover:shadow-md transition-shadow">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">⚠️</span>
+                <div>
+                  <p className="text-xs text-gray-500 font-medium">Status</p>
+                  <p className="text-lg font-bold text-gray-800">
+                    {temHoraExtra ? 'Extra' : 'Normal'}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
-
     </div>
   )
 }
