@@ -13,12 +13,12 @@ import { Button } from '@/components/ui/button'
  * @param {function} onSalvar - Callback chamado ao salvar configurações
  */
 function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinutos, onSalvar }) {
-  // Estados locais temporários para os campos de entrada
-  const [jornadaHoras, setJornadaHoras] = useState(Math.floor(jornadaMinutos / 60))
-  const [jornadaMin, setJornadaMin] = useState(jornadaMinutos % 60)
-  const [tolerancia, setTolerancia] = useState(toleranciaMinutos)
-  const [intervaloHoras, setIntervaloHoras] = useState(Math.floor(intervaloMinimoMinutos / 60))
-  const [intervaloMin, setIntervaloMin] = useState(intervaloMinimoMinutos % 60)
+  // Estados locais temporários - AGORA COMO STRING para melhor controle
+  const [jornadaHoras, setJornadaHoras] = useState(Math.floor(jornadaMinutos / 60).toString())
+  const [jornadaMin, setJornadaMin] = useState((jornadaMinutos % 60).toString())
+  const [tolerancia, setTolerancia] = useState(toleranciaMinutos.toString())
+  const [intervaloHoras, setIntervaloHoras] = useState(Math.floor(intervaloMinimoMinutos / 60).toString())
+  const [intervaloMin, setIntervaloMin] = useState((intervaloMinimoMinutos % 60).toString())
 
   // Estados para mensagens de erro
   const [erros, setErros] = useState({})
@@ -31,7 +31,7 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
     const novosErros = {}
 
     // Validação da jornada (mínimo 4h, máximo 12h)
-    const totalJornadaMinutos = jornadaHoras * 60 + jornadaMin
+    const totalJornadaMinutos = (parseInt(jornadaHoras) || 0) * 60 + (parseInt(jornadaMin) || 0)
     if (totalJornadaMinutos < 240) {
       novosErros.jornada = 'Jornada mínima: 4h'
     } else if (totalJornadaMinutos > 720) {
@@ -39,12 +39,13 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
     }
 
     // Validação da tolerância (0 a 60 minutos)
-    if (tolerancia < 0 || tolerancia > 60) {
+    const tolNum = parseInt(tolerancia) || 0
+    if (tolNum < 0 || tolNum > 60) {
       novosErros.tolerancia = 'Tolerância deve estar entre 0 e 60 minutos'
     }
 
     // Validação do intervalo (mínimo 30min para jornadas acima de 6h)
-    const totalIntervaloMinutos = intervaloHoras * 60 + intervaloMin
+    const totalIntervaloMinutos = (parseInt(intervaloHoras) || 0) * 60 + (parseInt(intervaloMin) || 0)
     if (totalJornadaMinutos > 360 && totalIntervaloMinutos < 30) {
       novosErros.intervalo = 'Intervalo mínimo: 30min para jornadas acima de 6h'
     }
@@ -58,23 +59,36 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
    */
   const handleAplicar = () => {
     if (validarCampos()) {
-      const novaJornadaMinutos = jornadaHoras * 60 + jornadaMin
-      const novoIntervaloMinutos = intervaloHoras * 60 + intervaloMin
+      const novaJornadaMinutos = (parseInt(jornadaHoras) || 0) * 60 + (parseInt(jornadaMin) || 0)
+      const novoIntervaloMinutos = (parseInt(intervaloHoras) || 0) * 60 + (parseInt(intervaloMin) || 0)
 
       onSalvar({
         jornadaMinutos: novaJornadaMinutos,
-        toleranciaMinutos: tolerancia,
+        toleranciaMinutos: parseInt(tolerancia) || 0,
         intervaloMinimoMinutos: novoIntervaloMinutos
       })
     }
   }
 
   /**
-   * Limita valores numéricos em inputs
+   * Handler para inputs numéricos - aceita apenas números e valida máximo
    */
-  const limitarValor = (valor, min, max) => {
-    const num = parseInt(valor) || 0
-    return Math.max(min, Math.min(max, num))
+  const handleNumericChange = (value, setter, max) => {
+    // Remove tudo que não é número
+    const numeros = value.replace(/\D/g, '')
+    
+    // Valida se está dentro do limite
+    if (numeros === '' || (parseInt(numeros) >= 0 && parseInt(numeros) <= max)) {
+      setter(numeros)
+    }
+  }
+
+  /**
+   * Remove zeros à esquerda quando o campo perde foco
+   */
+  const handleBlur = (value, setter) => {
+    const numero = parseInt(value) || 0
+    setter(numero.toString())
   }
 
   return (
@@ -93,6 +107,7 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
           </AccordionTrigger>
           <AccordionContent className="pt-4">
             <div className="bg-white rounded-2xl p-5 space-y-4 shadow-sm">
+              
               {/* Jornada diária */}
               <div>
                 <Label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
@@ -101,21 +116,25 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
                 </Label>
                 <div className="flex gap-2 items-center">
                   <Input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength="2"
                     value={jornadaHoras}
-                    onChange={(e) => setJornadaHoras(limitarValor(e.target.value, 0, 12))}
-                    className="flex-1"
-                    min="0"
-                    max="12"
+                    onChange={(e) => handleNumericChange(e.target.value, setJornadaHoras, 12)}
+                    onBlur={(e) => handleBlur(e.target.value, setJornadaHoras)}
+                    className="flex-1 text-center"
                   />
                   <span className="text-gray-600 font-medium text-sm">h</span>
                   <Input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength="2"
                     value={jornadaMin}
-                    onChange={(e) => setJornadaMin(limitarValor(e.target.value, 0, 59))}
-                    className="flex-1"
-                    min="0"
-                    max="59"
+                    onChange={(e) => handleNumericChange(e.target.value, setJornadaMin, 59)}
+                    onBlur={(e) => handleBlur(e.target.value, setJornadaMin)}
+                    className="flex-1 text-center"
                   />
                   <span className="text-gray-600 font-medium text-sm">min</span>
                 </div>
@@ -131,11 +150,14 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
                   Tolerância (minutos)
                 </Label>
                 <Input
-                  type="number"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  maxLength="2"
                   value={tolerancia}
-                  onChange={(e) => setTolerancia(limitarValor(e.target.value, 0, 60))}
-                  min="0"
-                  max="60"
+                  onChange={(e) => handleNumericChange(e.target.value, setTolerancia, 60)}
+                  onBlur={(e) => handleBlur(e.target.value, setTolerancia)}
+                  className="text-center"
                 />
                 {erros.tolerancia && (
                   <p className="text-red-500 text-xs mt-1 font-medium">{erros.tolerancia}</p>
@@ -150,21 +172,25 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
                 </Label>
                 <div className="flex gap-2 items-center">
                   <Input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength="1"
                     value={intervaloHoras}
-                    onChange={(e) => setIntervaloHoras(limitarValor(e.target.value, 0, 3))}
-                    className="flex-1"
-                    min="0"
-                    max="3"
+                    onChange={(e) => handleNumericChange(e.target.value, setIntervaloHoras, 3)}
+                    onBlur={(e) => handleBlur(e.target.value, setIntervaloHoras)}
+                    className="flex-1 text-center"
                   />
                   <span className="text-gray-600 font-medium text-sm">h</span>
                   <Input
-                    type="number"
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    maxLength="2"
                     value={intervaloMin}
-                    onChange={(e) => setIntervaloMin(limitarValor(e.target.value, 0, 59))}
-                    className="flex-1"
-                    min="0"
-                    max="59"
+                    onChange={(e) => handleNumericChange(e.target.value, setIntervaloMin, 59)}
+                    onBlur={(e) => handleBlur(e.target.value, setIntervaloMin)}
+                    className="flex-1 text-center"
                   />
                   <span className="text-gray-600 font-medium text-sm">min</span>
                 </div>
@@ -193,4 +219,4 @@ function ConfigJornada({ jornadaMinutos, toleranciaMinutos, intervaloMinimoMinut
   )
 }
 
-export default ConfigJornada
+export default ConfigJornada;
