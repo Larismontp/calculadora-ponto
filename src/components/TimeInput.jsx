@@ -20,7 +20,7 @@ function TimeInput({ label, color, value, onChange }) {
 
   return (
     <div>
-      <label className="block text-xs font-medium text-slate-500 mb-1.5 flex items-center gap-1.5">
+      <label className="text-xs font-medium text-slate-500 mb-1.5 flex items-center gap-1.5">
         <span className={`w-1.5 h-1.5 ${colorClasses[color]} rounded-full`}></span>
         {label}
       </label>
