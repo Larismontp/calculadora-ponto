@@ -99,7 +99,7 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 via-rose-50/30 to-orange-50/40 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-red-50 via-rose-50/30 to-orange-50/40 flex items-center justify-center px-4 py-6">
       <div className="w-full max-w-md space-y-6">
         {/* Cabeçalho */}
         <Header />
@@ -146,9 +146,10 @@ function App() {
           </div>
 
           {/* Conteúdo do card */}
-          <div className="p-5">
+          <div className="p-6 space-y-5">
+            <div className="space-y-4">
             {/* Grid 2 colunas */}
-            <div className="grid grid-cols-2 gap-3 mb-5">
+            <div className="grid grid-cols-2 gap-8">
               <TimeInput
                 label="1ª Entrada"
                 color="emerald"
@@ -161,6 +162,8 @@ function App() {
                 value={saida1}
                 onChange={(e) => setSaida1(e.target.value)}
               />
+            </div>
+            <div className="grid grid-cols-2 gap-8">
               <TimeInput
                 label="2ª Entrada"
                 color="blue"
@@ -173,6 +176,7 @@ function App() {
                 value={saida2}
                 onChange={(e) => setSaida2(e.target.value)}
               />
+            </div>
             </div>
 
             {/* Botões */}

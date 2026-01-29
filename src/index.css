@@ -107,3 +107,26 @@ input[type="time"]::-webkit-calendar-picker-indicator {
 input[type="time"]::-webkit-calendar-picker-indicator:hover {
   filter: opacity(0.6);
 }
+
+/* Reset de input time para iOS */
+input[type="time"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  min-height: 48px;
+  height: 48px;
+}
+
+input[type="time"]::-webkit-calendar-picker-indicator {
+  margin: 0;
+  padding: 0;
+}
+
+input[type="time"]::-webkit-datetime-edit {
+  padding: 0;
+}
+
+input[type="time"]::-webkit-inner-spin-button,
+input[type="time"]::-webkit-outer-spin-button {
+  margin: 0;
+}

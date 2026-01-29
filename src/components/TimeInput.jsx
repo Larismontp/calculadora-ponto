@@ -28,7 +28,7 @@ function TimeInput({ label, color, value, onChange }) {
         type="time"
         value={value}
         onChange={onChange}
-        className="w-full px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium text-center focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 transition-all outline-none"
+        className="w-full h-12 px-3 py-3 bg-slate-50 border border-slate-200 rounded-xl text-slate-800 font-medium focus:border-red-400 focus:bg-white focus:ring-2 focus:ring-red-100 transition-all outline-none"
       />
     </div>
   )
