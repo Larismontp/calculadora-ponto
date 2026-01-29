@@ -116,12 +116,21 @@ function ConfigJornada({
    * Remove zeros à esquerda e garante que não fique vazio
    */
   const handleBlur = (value, setter, defaultValue = 0) => {
-  if (value === '' || value === '0') {
+  if (value === '') {
     setter(defaultValue.toString())  // ← Se vazio, volta pro padrão
-  } else {
-    const numero = parseInt(value) || defaultValue
-    setter(numero.toString())  // ← Remove zeros à esquerda
+    return
+  } 
+  //converte pra número
+  const numero = parseInt(value)
+  //Se não é um número válido, usa padrão
+  if (isNaN(numero)) {
+    setter(defaultValue.toString())
+    return
   }
+
+  //Aceita qualquer número válido, incluindo 0
+  //Remove3 zeros à esquerda: '05' vira '5', '00' vira '0'
+  setter(numero.toString())
 };
 
   return (
