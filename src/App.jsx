@@ -151,13 +151,13 @@ function App() {
             {/* Grid 2 colunas */}
             <div className="grid grid-cols-2 gap-8">
               <TimeInput
-                label="1ª Entrada"
+                label="Entrada"
                 color="emerald"
                 value={entrada1}
                 onChange={(e) => setEntrada1(e.target.value)}
               />
               <TimeInput
-                label="1ª Saída"
+                label="Saída pro almoço"
                 color="amber"
                 value={saida1}
                 onChange={(e) => setSaida1(e.target.value)}
@@ -165,13 +165,13 @@ function App() {
             </div>
             <div className="grid grid-cols-2 gap-8">
               <TimeInput
-                label="2ª Entrada"
+                label="Retorno do almoço"
                 color="blue"
                 value={entrada2}
                 onChange={(e) => setEntrada2(e.target.value)}
               />
               <TimeInput
-                label="2ª Saída"
+                label="Fim do expediente"
                 color="purple"
                 value={saida2}
                 onChange={(e) => setSaida2(e.target.value)}
