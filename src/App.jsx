@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "./components/Header";
 import TimeInput from "./components/TimeInput";
 import ResultCard from "./components/ResultCard";
@@ -7,6 +7,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { calcularHorarioSaida } from "./utils/timeCalculations";
 
+  // Carrega config
+  // eslint-disable-next-line no-unused-vars
+  const carregarConfigSalva = () => {
+  try {
+    const item = localStorage.getItem('meuponto_config');
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error('Erro ao carregar config:', error);
+    return null;
+  }
+};
+
+// eslint-disable-next-line no-unused-vars
+const carregarHorariosSalvos = () => {
+  try {
+    const item = localStorage.getItem('meuponto_horarios');
+    return item ? JSON.parse(item) : null;
+  } catch (error) {
+    console.error('Erro ao carregar horários:', error);
+    return null;
+  }
+};
+  
 /**
  * Componente principal da aplicação
  * Responsável por gerenciar o estado e orquestrar os componentes filhos
@@ -38,6 +61,22 @@ function App() {
     horasExtras: "",
   });
 
+  // Salva dados no localStorage com tratamento de erro
+  const salvarNoLocalStorage = (chave, valor) => {
+    try {
+      localStorage.setItem(chave, JSON.stringify(valor));
+    } catch (error) {
+      console.error("Erro ao salvar no localStorage:", error);
+    }
+  };
+
+
+  // Salva horários
+  useEffect(() => {
+    const horarios = { entrada1, saida1, entrada2, saida2 };
+    salvarNoLocalStorage("meuponto_horarios", horarios);
+  }, [entrada1, saida1, entrada2, saida2]); // Executa quando qualquer horário mudar
+
   /**
    * Função que salva as novas configurações de jornada
    * @param {Object} config - Objeto com as novas configurações
@@ -46,6 +85,8 @@ function App() {
     setJornadaMinutos(config.jornadaMinutos);
     setToleranciaMinutos(config.toleranciaMinutos);
     setIntervaloMinimoMinutos(config.intervaloMinimoMinutos);
+    // Salva no localStorage
+    salvarNoLocalStorage("meuponto_config", config);
 
     // Recalcula automaticamente se já houver horários preenchidos
     if (entrada1 && saida1 && entrada2) {
@@ -134,6 +175,8 @@ function App() {
       horasTrabalhadas: "",
       horasExtras: "",
     });
+    // Remove do localStorage
+    localStorage.removeItem("meuponto_horarios");
   };
 
   return (
@@ -226,17 +269,35 @@ function App() {
             {/* Mensagem de aviso do intervalo */}
             {erroIntervalo && (
               <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
-                <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                <svg
+                  className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                  />
                 </svg>
-                <p className="text-xs text-red-700 font-medium">{erroIntervalo}</p>
+                <p className="text-xs text-red-700 font-medium">
+                  {erroIntervalo}
+                </p>
               </div>
             )}
 
             {/* Botões */}
             <Button
               onClick={handleCalcular}
-              disabled={isCalculating || !entrada1 || !saida1 || !entrada2 || erroIntervalo}
+              disabled={
+                isCalculating ||
+                !entrada1 ||
+                !saida1 ||
+                !entrada2 ||
+                erroIntervalo
+              }
               className="w-full mb-2 py-4 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white h-auto rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {/* Ícone de calculadora BRANCO */}
