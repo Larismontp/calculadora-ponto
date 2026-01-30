@@ -26,6 +26,9 @@ function App() {
   const [toleranciaMinutos, setToleranciaMinutos] = useState(10); // 10min
   const [intervaloMinimoMinutos, setIntervaloMinimoMinutos] = useState(72); // 1h12min
 
+  //estado para armazenar erro de intervalo minimo
+  const [erroIntervalo, setErroIntervalo] = useState("");
+
   // Estados para armazenar os resultados dos cálculos
   const [resultados, setResultados] = useState({
     horarioSaida: "",
@@ -67,7 +70,6 @@ function App() {
         saida2, // Passa o horário real de saída se foi preenchido
         jornadaMinutos,
         toleranciaMinutos,
-        intervaloMinimoMinutos,
       });
 
       setResultados(resultado);
@@ -79,6 +81,42 @@ function App() {
 
       setIsCalculating(false);
     }, 500);
+  };
+
+  /**
+   * Valida se o intervalo de almoço está dentro das regras da CLT
+   */
+  const validarIntervalo = () => {
+    if (!saida1 || !entrada2) {
+      setErroIntervalo("");
+      return true;
+    }
+
+    const saida1Min =
+      parseInt(saida1.split(":")[0]) * 60 + parseInt(saida1.split(":")[1]);
+    const entrada2Min =
+      parseInt(entrada2.split(":")[0]) * 60 + parseInt(entrada2.split(":")[1]);
+    const intervaloReal = entrada2Min - saida1Min;
+
+    // Valida conforme CLT
+    if (jornadaMinutos > 480 && intervaloReal < 60) {
+      setErroIntervalo(
+        "⚠️ CLT: Jornada acima de 8h exige intervalo mínimo de 1 hora",
+      );
+      return false;
+    } else if (
+      jornadaMinutos > 240 &&
+      jornadaMinutos <= 360 &&
+      intervaloReal < 15
+    ) {
+      setErroIntervalo(
+        "⚠️ CLT: Jornada entre 4h e 6h exige intervalo mínimo de 15 minutos",
+      );
+      return false;
+    } else {
+      setErroIntervalo("");
+      return true;
+    }
   };
 
   /**
@@ -148,42 +186,58 @@ function App() {
           {/* Conteúdo do card */}
           <div className="p-6 space-y-5">
             <div className="space-y-4">
-            {/* Grid 2 colunas */}
-            <div className="grid grid-cols-2 gap-8">
-              <TimeInput
-                label="Entrada"
-                color="emerald"
-                value={entrada1}
-                onChange={(e) => setEntrada1(e.target.value)}
-              />
-              <TimeInput
-                label="Saída pro almoço"
-                color="amber"
-                value={saida1}
-                onChange={(e) => setSaida1(e.target.value)}
-              />
+              {/* Grid 2 colunas */}
+              <div className="grid grid-cols-2 gap-8">
+                <TimeInput
+                  label="Entrada"
+                  color="emerald"
+                  value={entrada1}
+                  onChange={(e) => setEntrada1(e.target.value)}
+                />
+                <TimeInput
+                  label="Saída pro almoço"
+                  color="amber"
+                  value={saida1}
+                  onChange={(e) => {
+                    setSaida1(e.target.value);
+                    setTimeout(() => validarIntervalo(), 100);
+                  }}
+                />
+              </div>
+              <div className="grid grid-cols-2 gap-8">
+                <TimeInput
+                  label="Retorno do almoço"
+                  color="blue"
+                  value={entrada2}
+                  onChange={(e) => {
+                    setEntrada2(e.target.value);
+                    setTimeout(() => validarIntervalo(), 100);
+                  }}
+                />
+                <TimeInput
+                  label="Fim do expediente"
+                  color="purple"
+                  value={saida2}
+                  onChange={(e) => setSaida2(e.target.value)}
+                />
+              </div>
             </div>
-            <div className="grid grid-cols-2 gap-8">
-              <TimeInput
-                label="Retorno do almoço"
-                color="blue"
-                value={entrada2}
-                onChange={(e) => setEntrada2(e.target.value)}
-              />
-              <TimeInput
-                label="Fim do expediente"
-                color="purple"
-                value={saida2}
-                onChange={(e) => setSaida2(e.target.value)}
-              />
-            </div>
-            </div>
+
+            {/* Mensagem de aviso do intervalo */}
+            {erroIntervalo && (
+              <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+                <svg className="w-5 h-5 text-red-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                </svg>
+                <p className="text-xs text-red-700 font-medium">{erroIntervalo}</p>
+              </div>
+            )}
 
             {/* Botões */}
             <Button
               onClick={handleCalcular}
-              disabled={isCalculating}
-              className="w-full mb-2 py-4 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white h-auto rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2"
+              disabled={isCalculating || !entrada1 || !saida1 || !entrada2 || erroIntervalo}
+              className="w-full mb-2 py-4 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-700 hover:to-rose-800 text-white h-auto rounded-xl font-semibold shadow-lg flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {/* Ícone de calculadora BRANCO */}
               <svg

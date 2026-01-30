@@ -65,13 +65,18 @@ function ConfigJornada({
       novosErros.tolerancia = "Tolerância deve estar entre 0 e 60 minutos";
     }
 
-    // Validação do intervalo (mínimo 30min para jornadas acima de 6h)
-    const totalIntervaloMinutos =
-      (parseInt(intervaloHoras) || 0) * 60 + (parseInt(intervaloMin) || 0);
-    if (totalJornadaMinutos > 360 && totalIntervaloMinutos < 30) {
-      novosErros.intervalo =
-        "Intervalo mínimo: 30min para jornadas acima de 6h";
+    // VALIDAÇÃO DO INTERVALO CONFORME CLT:
+    const totalIntervaloMinutos = (parseInt(intervaloHoras) || 0) * 60 + (parseInt(intervaloMin) || 0)
+  
+    // Jornada > 8h exige intervalo mínimo de 1h
+    if (totalJornadaMinutos > 480 && totalIntervaloMinutos < 60) {
+    novosErros.intervalo = 'Jornada acima de 8h exige intervalo mínimo de 1 hora (CLT)'
     }
+    // Jornada entre 4h e 6h exige intervalo mínimo de 15min
+    else if (totalJornadaMinutos > 240 && totalJornadaMinutos <= 360 && totalIntervaloMinutos < 15) {
+    novosErros.intervalo = 'Jornada entre 4h e 6h exige intervalo mínimo de 15 minutos (CLT)'
+    }
+
 
     setErros(novosErros);
     return Object.keys(novosErros).length === 0;
@@ -285,8 +290,7 @@ function ConfigJornada({
 
               {/* Informação sobre valores padrão */}
               <div className="text-xs text-gray-500 text-center pt-2 border-t border-gray-200">
-                💡 Valores padrão: 8h48min jornada, 10min tolerância, 1h12min
-                intervalo
+                💡 Regra CLT: Jornadas de 8h exigem 1h de intervalo · Entre 4h e 6h exigem 15min de intervalo.
               </div>
             </div>
           </AccordionContent>

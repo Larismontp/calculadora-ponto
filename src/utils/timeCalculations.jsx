@@ -45,7 +45,6 @@ export const formatarTempo = (minutos) => {
  * @param {string} params.saida2 - Horário da segunda saída (fim do expediente)
  * @param {number} params.jornadaMinutos - Jornada completa em minutos (padrão: 528 = 8h48min)
  * @param {number} params.toleranciaMinutos - Tolerância em minutos (padrão: 10)
- * @param {number} params.intervaloMinimoMinutos - Intervalo mínimo em minutos (padrão: 72 = 1h12min)
  * @returns {Object} - Objeto com horário de saída, tempo de almoço e horas trabalhadas
  */
 export const calcularHorarioSaida = ({
@@ -54,8 +53,7 @@ export const calcularHorarioSaida = ({
   entrada2,
   saida2,
   jornadaMinutos = 528,
-  toleranciaMinutos = 10,
-  intervaloMinimoMinutos = 72
+  toleranciaMinutos = 10
 }) => {
   // Jornada completa SEM tolerância (valor configurável)
   const JORNADA_COMPLETA = jornadaMinutos
@@ -73,6 +71,12 @@ export const calcularHorarioSaida = ({
 
   // Calcular tempo de almoço (intervalo entre saída e retorno)
   const almoco = entrada2Min - saida1Min
+
+  if (jornadaMinutos > 480 && almoco < 60) {
+    console.warn(`⚠️ CLT: Jornada acima de 8h exige intervalo mínimo de 1 hora. Atual: ${formatarTempo(almoco)}`)
+  } else if (jornadaMinutos > 240 && jornadaMinutos <= 360 && almoco < 15) {
+    console.warn(`⚠️ CLT: Jornada entre 4h e 6h exige intervalo mínimo de 15 minutos. Atual: ${formatarTempo(almoco)}`)
+  }
 
   // ===== CÁLCULO COM TOLERÂNCIA (8h38min) =====
   // Calcular quantos minutos ainda faltam trabalhar após o almoço
