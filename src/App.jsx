@@ -35,19 +35,23 @@ const carregarHorariosSalvos = () => {
  * Responsável por gerenciar o estado e orquestrar os componentes filhos
  */
 function App() {
+ // Carrega dados salvos
+  const configSalva = carregarConfigSalva();
+  const horariosSalvos = carregarHorariosSalvos();
+
   // Estados para armazenar os horários digitados pelo usuário
-  const [entrada1, setEntrada1] = useState("");
-  const [saida1, setSaida1] = useState("");
-  const [entrada2, setEntrada2] = useState("");
-  const [saida2, setSaida2] = useState("");
+  const [entrada1, setEntrada1] = useState(horariosSalvos?.entrada1 || "");
+  const [saida1, setSaida1] = useState(horariosSalvos?.saida1 || "");
+  const [entrada2, setEntrada2] = useState(horariosSalvos?.entrada2 || "");
+  const [saida2, setSaida2] = useState(horariosSalvos?.saida2 || "");
 
   // Estado para controlar loading da animação
   const [isCalculating, setIsCalculating] = useState(false);
 
-  // Estados para configuração de jornada (valores padrão mantêm comportamento atual)
-  const [jornadaMinutos, setJornadaMinutos] = useState(528); // 8h48min
-  const [toleranciaMinutos, setToleranciaMinutos] = useState(10); // 10min
-  const [intervaloMinimoMinutos, setIntervaloMinimoMinutos] = useState(72); // 1h12min
+  // Estados para configuração de jornada (carrega dados salvos ou usa padrão)
+  const [jornadaMinutos, setJornadaMinutos] = useState(configSalva?.jornadaMinutos || 528);
+  const [toleranciaMinutos, setToleranciaMinutos] = useState(configSalva?.toleranciaMinutos || 10);
+  const [intervaloMinimoMinutos, setIntervaloMinimoMinutos] = useState(configSalva?.intervaloMinimoMinutos || 72);
 
   //estado para armazenar erro de intervalo minimo
   const [erroIntervalo, setErroIntervalo] = useState("");
